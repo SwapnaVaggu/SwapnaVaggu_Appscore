@@ -52,7 +52,6 @@
                 $("form").submit();
             });
 
-
             $('#LoadMyList').click(function (evt) {
 
                 var Val1 = $('#PersonName').val();
@@ -65,15 +64,37 @@
                 }
 
                 if ($("#chkfemale").is(":checked") && $("#chkmale").is(":checked")) {
-                    Val2 = ""
+                    Val2 = "MF"
                 }
-                // alert(Val1);
+
+                if (Val1 == null || Val1 == "") {
+                    alert("Enter Name of the Person");
+                    return;
+                }
+                if (Val2 == null || Val2 == "") {
+                    alert("Select Gender");
+                    return;
+                }
+                if (Val2 == "MF") {
+                    alert("Select any one Gender, Male or Female");
+                    return;
+                }
+
+                var Val3 = $("input[name='direction']:checked").val();
+
+                if (Val3 == null || Val3 == "") {
+                    alert("Select Direction");
+                    return;
+                }
+
                 $("#name").val(Val1);
                 $("#gender").val(Val2);
+                $("#direction").val(Val3);
                 $("#CurrentPageIndex").val(0);
-                evt.preventDefault();
+                //  evt.preventDefault();
                 $("form").submit();
             });
+           
 
         });
     </script>

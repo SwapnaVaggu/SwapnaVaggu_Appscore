@@ -65,13 +65,34 @@
                 }
 
                 if ($("#chkfemale").is(":checked") && $("#chkmale").is(":checked")) {
-                    Val2 = ""
+                    Val2 = "MF"
                 }
-                // alert(Val1);
+
+                if (Val1 == null || Val1 == "") {
+                    alert("Enter Name of the Person");
+                    return;
+                }
+                if (Val2 == null || Val2 == "") {
+                    alert("Select Gender");
+                    return;
+                }
+                if (Val2 == "MF") {
+                    alert("Select any one Gender, Male or Female");
+                    return;
+                }
+
+                var Val3 = $("input[name='direction']:checked").val();
+
+                if (Val3 == null || Val3 == "") {
+                    alert("Select Direction");
+                    return;
+                }
+
                 $("#name").val(Val1);
                 $("#gender").val(Val2);
+                $("#direction").val(Val3);
                 $("#CurrentPageIndex").val(0);
-                evt.preventDefault();
+                //  evt.preventDefault();
                 $("form").submit();
             });
 
@@ -84,7 +105,7 @@
         PersonSearch.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
     }
 
-    @using (Html.BeginForm("SimpleSearch", "Search", FormMethod.Post))
+    @using (Html.BeginForm("AdvancedSearch", "Search", FormMethod.Post))
     {
         @Html.Hidden("SortField", info.SortField)
         @Html.Hidden("SortDirection", info.SortDirection)
@@ -100,7 +121,7 @@
                     Direction: <input type="radio" name="direction" value="Ancestors"> Ancestors
                     <input type="radio" name="direction" value="Descendants"> Descendants
                 </td>
-                <td colspan="3" class="left">
+                <td colspan="5" class="left">
                     <input type="button" id="LoadMyList" value="Search" />
                     
                 </td>
@@ -110,6 +131,8 @@
                 <th><a data-sortfield="NAME" class="header">NAME</a></th>
                 <th><a data-sortfield="GENDER" class="header">GENDER</a></th>
                 <th><a data-sortfield="BIRTHPLACE" class="header">BIRTHPLACE</a></th>
+                <th><a data-sortfield="Country" class="header">FATHERID</a></th>
+                <th><a data-sortfield="Country" class="header">LEVEL</a></th>
             </tr>
 
 
@@ -120,11 +143,13 @@
                     <td class="left">@item.NAME</td>
                     <td class="left">@item.GENDER</td>
                     <td class="left">@item.BIRTHPLACE</td>
+                    <td class="left">@item.FATHER_ID</td>
+                    <td class="left">@item.LEVEL</td>
                 </tr>
             }
 
             <tr>
-                <td colspan="4">
+                <td colspan="6">
 
 
                     @for (var i = 0; i < info.PageCount; i++)
