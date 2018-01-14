@@ -53,7 +53,27 @@
             });
 
 
+            $('#LoadMyList').click(function (evt) {
 
+                var Val1 = $('#PersonName').val();
+                var Val2 = "";
+                if ($("#chkmale").is(":checked")) {
+                    Val2 = "Male"
+                }
+                if ($("#chkfemale").is(":checked")) {
+                    Val2 = "Female"
+                }
+
+                if ($("#chkfemale").is(":checked") && $("#chkmale").is(":checked")) {
+                    Val2 = ""
+                }
+                // alert(Val1);
+                $("#name").val(Val1);
+                $("#gender").val(Val2);
+                $("#CurrentPageIndex").val(0);
+                evt.preventDefault();
+                $("form").submit();
+            });
 
         });
     </script>
@@ -71,7 +91,8 @@
         @Html.Hidden("PageCount", info.PageCount)
         @Html.Hidden("PageSize", info.PageSize)
         @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
-
+        @Html.Hidden("name", info.name)
+        @Html.Hidden("gender", info.gender)
         <table style="width: 90%" class="grid">
             <tr>
                 <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br></td>

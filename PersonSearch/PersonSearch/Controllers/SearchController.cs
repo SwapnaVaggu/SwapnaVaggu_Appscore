@@ -87,7 +87,50 @@ namespace PersonSearch.Controllers
                                       BIRTHPLACE = d["name"].Value<string>()
                                   });
 
-         
+
+            if (!string.IsNullOrEmpty(info.name) || !string.IsNullOrEmpty(info.gender))
+            {
+                if (!string.IsNullOrEmpty(info.name) && string.IsNullOrEmpty(info.gender))
+                {
+                    join = join.Where(s => s.NAME.ToLower().Contains(info.name.ToLower()));
+                }
+                else if (string.IsNullOrEmpty(info.name) && !string.IsNullOrEmpty(info.gender))
+                {
+                    join = join.Where(s => s.GENDER == info.gender);
+                }
+                else if (!string.IsNullOrEmpty(info.name) && !string.IsNullOrEmpty(info.gender))
+                {
+                    join = join.Where(s => s.NAME.ToLower().Contains(info.name.ToLower()) && s.GENDER == info.gender);
+                }
+
+                string JSONFinalresult = JsonConvert.SerializeObject(join);
+                List<People> myDeserializedObjList = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult, typeof(List<People>));
+
+
+
+                info.PageSize = 10;
+                int rem = myDeserializedObjList.Count() % info.PageSize;
+                if (rem == 0)
+                {
+                    info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList.Count() / info.PageSize)));
+                }
+                else
+                {
+                    info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList.Count() / info.PageSize))) + 1;
+                }
+                // info.CurrentPageIndex = 0;
+
+                // query = myDeserializedObjList.AsQueryable().Take(info.PageSize);
+                query = myDeserializedObjList.AsQueryable();
+                query = query.Skip(info.CurrentPageIndex * info.PageSize).Take(info.PageSize);
+
+                ViewBag.SortingPagingInfo = info;
+                model = query.ToList();
+
+
+            }
+            else
+            {
                 string JSONFinalresult = JsonConvert.SerializeObject(join);
                 List<People> myDeserializedObjList = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult, typeof(List<People>));
 
@@ -98,10 +141,8 @@ namespace PersonSearch.Controllers
                 ViewBag.SortingPagingInfo = info;
                 model = query.ToList();
 
+            }
             
-
-
-
             return View(model);
             //}
         }
