@@ -17,7 +17,7 @@
     <script src="~/Assets/bootstrap/js/bootstrap.min.js"></script>
    
 
-    <title>@ViewBag.Title  Simple Search</title>
+    <title>@ViewBag.Title  Person Search</title>
   
 
     <script type="text/javascript">
@@ -97,7 +97,7 @@
             <tr>
                 <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br></td>
                 <td colspan="3" class="left"> <input type="button" id="LoadMyList" value="Search" />
-                 <input type="button" value="Advanced Search" onclick="@("window.location.href='" + @Url.Action("AdvancedSearch", "Home") + "'");" /></td>
+                 <input type="button" value="Advanced Search" onclick="@("window.location.href='" + @Url.Action("AdvancedSearch", "Search") + "'");" /></td>
             </tr>
             <tr>
                 <th><a data-sortfield="ID" class="header">ID</a></th>

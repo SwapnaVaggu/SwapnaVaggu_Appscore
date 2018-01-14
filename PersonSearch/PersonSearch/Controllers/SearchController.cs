@@ -149,7 +149,17 @@ namespace PersonSearch.Controllers
 
         public ActionResult AdvancedSearch()
         {
-            return View();
+            SortingPagingInfo info = new SortingPagingInfo();
+            info.SortField = "ID";
+            info.SortDirection = "ascending";
+            info.PageSize = 10;
+            info.PageCount = 0;
+            info.CurrentPageIndex = 0;
+
+            ViewBag.SortingPagingInfo = info;
+            List<People> model = new List<People>();
+
+            return View(model);
         }
 
     }

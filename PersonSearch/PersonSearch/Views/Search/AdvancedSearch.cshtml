@@ -1,7 +1,153 @@
-﻿
+﻿@model List<PersonSearch.Models.People>
+
 @{
-    ViewBag.Title = "AdvancedSearch";
+    Layout = null;
 }
 
-<h2>AdvancedSearch</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    @*<script src="https://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js" type="text/javascript"></script>*@
+    <link href="~/Content/CustomeStyle.css" rel="stylesheet" />
+    <link href="~/Content/sinorcaish-screen.css" rel="stylesheet" />
+
+
+    <script src="~/Assets/bootstrap/Jquery-3.1.0.js"></script>
+    <script src="~/Assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <title>@ViewBag.Title  Person Search</title>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".header").click(function (evt) {
+                var sortfield = $(evt.target).data("sortfield");
+                if ($("#SortField").val() == sortfield)
+                {
+                    if($("#SortDirection").val()=="ascending")
+                    {
+                        $("#SortDirection").val("descending");
+                    }
+                    else
+                    {
+                        $("#SortDirection").val("ascending");
+                    }
+                }
+                else
+                {
+                    $("#SortField").val(sortfield);
+                    $("#SortDirection").val("ascending");
+                }
+                evt.preventDefault();
+                $("form").submit();
+            });
+
+            $(".pager").click(function (evt) {
+                var pageindex = $(evt.target).data("pageindex");
+                $("#CurrentPageIndex").val(pageindex);
+                evt.preventDefault();
+                $("form").submit();
+            });
+
+
+            $('#LoadMyList').click(function (evt) {
+
+                var Val1 = $('#PersonName').val();
+                var Val2 = "";
+                if ($("#chkmale").is(":checked")) {
+                    Val2 = "Male"
+                }
+                if ($("#chkfemale").is(":checked")) {
+                    Val2 = "Female"
+                }
+
+                if ($("#chkfemale").is(":checked") && $("#chkmale").is(":checked")) {
+                    Val2 = ""
+                }
+                // alert(Val1);
+                $("#name").val(Val1);
+                $("#gender").val(Val2);
+                $("#CurrentPageIndex").val(0);
+                evt.preventDefault();
+                $("form").submit();
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <h1>List of Persons - Advanced Search</h1>
+    @{
+        PersonSearch.Models.SortingPagingInfo info = ViewBag.SortingPagingInfo;
+    }
+
+    @using (Html.BeginForm("SimpleSearch", "Search", FormMethod.Post))
+    {
+        @Html.Hidden("SortField", info.SortField)
+        @Html.Hidden("SortDirection", info.SortDirection)
+        @Html.Hidden("PageCount", info.PageCount)
+        @Html.Hidden("PageSize", info.PageSize)
+        @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
+        @Html.Hidden("name", info.name)
+        @Html.Hidden("gender", info.gender)
+        <table style="width: 90%" class="grid">
+            <tr>
+                <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br></td>
+                <td colspan="3" class="left">
+                    <input type="button" id="LoadMyList" value="Search" />
+                    
+                </td>
+            </tr>
+            <tr>
+                <th><a data-sortfield="ID" class="header">ID</a></th>
+                <th><a data-sortfield="NAME" class="header">NAME</a></th>
+                <th><a data-sortfield="GENDER" class="header">GENDER</a></th>
+                <th><a data-sortfield="BIRTHPLACE" class="header">BIRTHPLACE</a></th>
+            </tr>
+
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="left">@item.ID</td>
+                    <td class="left">@item.NAME</td>
+                    <td class="left">@item.GENDER</td>
+                    <td class="left">@item.BIRTHPLACE</td>
+                </tr>
+            }
+
+            <tr>
+                <td colspan="4">
+
+
+                    @for (var i = 0; i < info.PageCount; i++)
+                    {
+                        if (i == info.CurrentPageIndex)
+                        {
+
+
+                            <span>@(i + 1)</span>
+                        }
+                        else
+                        {
+
+
+                            <a href="#" data-pageindex="@i" class="pager">@(i + 1)</a>
+                        }
+                    }
+
+
+                </td>
+
+            </tr>
+        </table>
+    }
+</body>
+
+</html>
+
+
 
