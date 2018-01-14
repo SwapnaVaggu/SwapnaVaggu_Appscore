@@ -117,6 +117,11 @@
         @Html.Hidden("direction", info.direction)
         <table style="width: 90%" class="grid">
             <tr>
+
+                <td colspan="6" class="left"> <input type="button" value="Back to Simple Search" onclick="@("window.location.href='" + @Url.Action("SimpleSearch", "Search") + "'");" /></td>
+
+            </tr>
+            <tr>
                 <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br>
                     Direction: <input type="radio" name="direction" value="Ancestors"> Ancestors
                     <input type="radio" name="direction" value="Descendants"> Descendants

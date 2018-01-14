@@ -165,6 +165,27 @@ namespace PersonSearch.Controllers
         [HttpPost]
         public ActionResult AdvancedSearch(SortingPagingInfo info)
         {
+
+            List<People> model = new List<People>();
+            if (info.direction == "Ancestors")
+            {
+                Int64[] Ancestors = new Int64[300];
+                model = getAncestorsOrDescendanta(info);
+            }
+            else if (info.direction == "Descendants")
+            {
+                Int64[] descendants = new Int64[300];
+                model = getAncestorsOrDescendanta(info);
+            }          
+           
+            
+            return View(model);
+            
+        }
+
+        private List<People> getAncestorsOrDescendanta(SortingPagingInfo info)
+        {
+            string type = info.direction;
             string file = Server.MapPath("~/App_Data/data_large.json");
             //deserialize JSON from file  
             string JSONresult = System.IO.File.ReadAllText(file);
@@ -190,22 +211,42 @@ namespace PersonSearch.Controllers
 
 
             var join1 = join.Where(s => s.NAME.ToLower().TrimEnd().TrimStart() == info.name.ToLower().TrimEnd().TrimStart() && s.GENDER == info.gender);
-
             string JSONFinalresult = JsonConvert.SerializeObject(join1);
             List<People> myDeserializedObjList = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult, typeof(List<People>));
-            // var firstElement = myDeserializedObjList.First();
             People cust1 = new People();
             cust1 = myDeserializedObjList.First();
-            if (info.direction == "Ancestors" && cust1.FATHER_ID != 0)
-            {
 
-                ///Code to get Ancestors
-                Int64[] fatherid = { cust1.FATHER_ID };
-                Int64[] Ancestors = new Int64[100];
-                int k = 0;
-                for (int i = 0; i < 10; i++)
+            Int64[] AncestorsOrDescendants = new Int64[300];
+            Int64[] fatheridorChildID = new Int64[100];
+            if ( type=="Ancestors" && cust1.FATHER_ID!=0)
+            {
+                fatheridorChildID[0] =  cust1.FATHER_ID ;
+            }
+            else if (type == "Descendants")
+            {
+                fatheridorChildID[0] = cust1.ID;
+            }
+            else
+            {
+                info.SortField = "ID";
+                info.SortDirection = "ascending";
+                info.PageSize = 10;
+                info.PageCount = 0;
+                info.CurrentPageIndex = 0;
+
+                ViewBag.SortingPagingInfo = info;
+                return model;
+            }
+
+            int k = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                var join_1 = join;
+                var filteringQuery= join_1;
+
+                if (type == "Ancestors")
                 {
-                    var filteringQuery = join.Where(s => fatherid.Contains(Convert.ToInt32(s.ID))).
+                    filteringQuery = join_1.Where(s => fatheridorChildID.Contains(Convert.ToInt32(s.ID))).
                         Select(s => new
                         {
                             ID = s.ID,
@@ -215,156 +256,80 @@ namespace PersonSearch.Controllers
                             FATHER_ID = s.FATHER_ID,
                             LEVEL = s.LEVEL
                         });
-                    string JSONFinalresult_ans = JsonConvert.SerializeObject(filteringQuery);
-                    List<People> myDeserializedObjList_ans = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_ans, typeof(List<People>));
-                    int j = 0;
-                    foreach (var item in myDeserializedObjList_ans)
-                    {
-                        fatherid[j] = item.FATHER_ID;
-                        Ancestors[k] = item.ID;
-                        j = j + 1;
-                        k = k + 1;
-                    }
-
-
-                }
-
-
-                var join2 = join.Where(s => Ancestors.Contains(Convert.ToInt32(s.ID))).
-                            Select(s => new
-                            {
-                                ID = s.ID,
-                                NAME = s.NAME,
-                                GENDER = s.GENDER,
-                                BIRTHPLACE = s.BIRTHPLACE,
-                                FATHER_ID = s.FATHER_ID,
-                                LEVEL = s.LEVEL
-                            });
-
-
-
-                string JSONFinalresult_ans1 = JsonConvert.SerializeObject(join2);
-                List<People> myDeserializedObjList_ans1 = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_ans1, typeof(List<People>));
-                //  myDeserializedObjList[0];
-
-                info.PageSize = 10;
-                int rem = myDeserializedObjList_ans1.Count() % info.PageSize;
-                if (rem == 0)
-                {
-                    info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_ans1.Count() / info.PageSize)));
                 }
                 else
                 {
-                    info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_ans1.Count() / info.PageSize))) + 1;
-                }
-                // info.CurrentPageIndex = 0;
-
-                // query = myDeserializedObjList.AsQueryable().Take(info.PageSize);
-                query = myDeserializedObjList_ans1.AsQueryable();
-                query = query.Skip(info.CurrentPageIndex * info.PageSize).Take(info.PageSize);
-
-                ViewBag.SortingPagingInfo = info;
-                model = query.ToList();
-
-
-          
-            
-            }
-            else if (info.direction == "Descendants")
-            {
-
-
-                if (cust1.ID != 0)
-                {
-                    ///Code to get Ancestors
-                    Int64[] childid = new Int64[1000];
-                    childid[0] = cust1.ID;
-                    Int64[] descendants = new Int64[1000];
-                    int k = 0;
-                    for (int i = 0; i < 10; i++)
-                    {
-                        var filteringQuery = join.Where(s => childid.Contains(Convert.ToInt32(s.FATHER_ID)) && Convert.ToInt32(s.FATHER_ID) != 0).
-                            Select(s => new
-                            {
-                                ID = s.ID,
-                                NAME = s.NAME,
-                                GENDER = s.GENDER,
-                                BIRTHPLACE = s.BIRTHPLACE,
-                                FATHER_ID = s.FATHER_ID,
-                                LEVEL = s.LEVEL
-                            });
-                        string JSONFinalresult_des = JsonConvert.SerializeObject(filteringQuery);
-                        List<People> myDeserializedObjList_des = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_des, typeof(List<People>));
-                        int j = 0;
-                        foreach (var item in myDeserializedObjList_des)
+                    filteringQuery = join_1.Where(s => fatheridorChildID.Contains(Convert.ToInt32(s.FATHER_ID)) && Convert.ToInt32(s.FATHER_ID) != 0).
+                        Select(s => new
                         {
-                            childid[j] = item.ID;
-                            descendants[k] = item.ID;
-                            j = j + 1;
-                            k = k + 1;
-                        }
-
-
-                    }
-
-
-                    var join2 = join.Where(s => descendants.Contains(Convert.ToInt32(s.ID))).
-                                Select(s => new
-                                {
-                                    ID = s.ID,
-                                    NAME = s.NAME,
-                                    GENDER = s.GENDER,
-                                    BIRTHPLACE = s.BIRTHPLACE,
-                                    FATHER_ID = s.FATHER_ID,
-                                    LEVEL = s.LEVEL
-                                });
-
-
-
-                    string JSONFinalresult_des1 = JsonConvert.SerializeObject(join2);
-                    List<People> myDeserializedObjList_des1 = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_des1, typeof(List<People>));
-                    //  myDeserializedObjList[0];
-
-                    info.PageSize = 10;
-                    int rem = myDeserializedObjList_des1.Count() % info.PageSize;
-                    if (rem == 0)
+                            ID = s.ID,
+                            NAME = s.NAME,
+                            GENDER = s.GENDER,
+                            BIRTHPLACE = s.BIRTHPLACE,
+                            FATHER_ID = s.FATHER_ID,
+                            LEVEL = s.LEVEL
+                        });
+                }
+                string JSONFinalresult_ans = JsonConvert.SerializeObject(filteringQuery);
+                List<People> myDeserializedObjList_ans = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_ans, typeof(List<People>));
+                int j = 0;
+                foreach (var item in myDeserializedObjList_ans)
+                {
+                    if (type == "Ancestors")
                     {
-                        info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_des1.Count() / info.PageSize)));
+                        fatheridorChildID[j] = item.FATHER_ID;
                     }
                     else
                     {
-                        info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_des1.Count() / info.PageSize))) + 1;
+                        fatheridorChildID[j] = item.ID;
                     }
-                    // info.CurrentPageIndex = 0;
 
-                    // query = myDeserializedObjList.AsQueryable().Take(info.PageSize);
-                    query = myDeserializedObjList_des1.AsQueryable();
-                    query = query.Skip(info.CurrentPageIndex * info.PageSize).Take(info.PageSize);
-
-                    ViewBag.SortingPagingInfo = info;
-                    model = query.ToList();
-
+                    AncestorsOrDescendants[k] = item.ID;
+                    j = j + 1;
+                    k = k + 1;
                 }
+
+
+            }
+
+
+            var join2 = join.Where(s => AncestorsOrDescendants.Contains(Convert.ToInt32(s.ID))).
+                        Select(s => new
+                        {
+                            ID = s.ID,
+                            NAME = s.NAME,
+                            GENDER = s.GENDER,
+                            BIRTHPLACE = s.BIRTHPLACE,
+                            FATHER_ID = s.FATHER_ID,
+                            LEVEL = s.LEVEL
+                        });
+
+
+
+            string JSONFinalresult_ans1 = JsonConvert.SerializeObject(join2);
+            List<People> myDeserializedObjList_ans1 = (List<People>)Newtonsoft.Json.JsonConvert.DeserializeObject(JSONFinalresult_ans1, typeof(List<People>));
+            //  myDeserializedObjList[0];
+
+            info.PageSize = 10;
+            int rem = myDeserializedObjList_ans1.Count() % info.PageSize;
+            if (rem == 0)
+            {
+                info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_ans1.Count() / info.PageSize)));
             }
             else
             {
-              
-                info.SortField = "ID";
-                info.SortDirection = "ascending";
-                info.PageSize = 10;
-                info.PageCount = 0;
-                info.CurrentPageIndex = 0;
-
-                ViewBag.SortingPagingInfo = info;
-                model = new List<People>();
+                info.PageCount = Convert.ToInt32(Math.Ceiling((double)(myDeserializedObjList_ans1.Count() / info.PageSize))) + 1;
             }
+            // info.CurrentPageIndex = 0;
 
+            // query = myDeserializedObjList.AsQueryable().Take(info.PageSize);
+            query = myDeserializedObjList_ans1.AsQueryable();
+            query = query.Skip(info.CurrentPageIndex * info.PageSize).Take(info.PageSize);
 
+            ViewBag.SortingPagingInfo = info;
+            model = query.ToList();
 
-            return View(model);
-            //}
+            return model;
         }
-
-
     }
 }
