@@ -93,9 +93,13 @@
         @Html.Hidden("CurrentPageIndex", info.CurrentPageIndex)
         @Html.Hidden("name", info.name)
         @Html.Hidden("gender", info.gender)
+        @Html.Hidden("direction", info.direction)
         <table style="width: 90%" class="grid">
             <tr>
-                <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br></td>
+                <td class="left"> <input type="text" id="PersonName" /><br>Gender: <input type="checkbox" id="chkmale" value="Male"> Male <input type="checkbox" id="chkfemale" value="Female"> Female<br>
+                    Direction: <input type="radio" name="direction" value="Ancestors"> Ancestors
+                    <input type="radio" name="direction" value="Descendants"> Descendants
+                </td>
                 <td colspan="3" class="left">
                     <input type="button" id="LoadMyList" value="Search" />
                     

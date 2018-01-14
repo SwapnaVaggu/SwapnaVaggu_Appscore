@@ -15,5 +15,6 @@ namespace PersonSearch.Models
 
         public string name { get; set; }
         public string gender { get; set; }
+        public string direction { get; set; }
     }
 }
