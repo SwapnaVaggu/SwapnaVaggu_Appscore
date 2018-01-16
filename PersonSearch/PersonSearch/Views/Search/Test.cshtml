@@ -1,0 +1,71 @@
+﻿@model IEnumerable<PersonSearch.Models.People>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Test</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NAME)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GENDER)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BIRTHPLACE)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FATHER_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MOTHER_ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LEVEL)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NAME)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GENDER)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BIRTHPLACE)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FATHER_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MOTHER_ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LEVEL)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            </td>
+        </tr>
+    }
+    
+    </table>
+</body>
+</html>

@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PersonSearch</RootNamespace>
     <AssemblyName>PersonSearch</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -209,6 +209,7 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\Search\SimpleSearch.cshtml" />
     <Content Include="Views\Search\AdvancedSearch.cshtml" />
+    <Content Include="Views\Search\Test.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
